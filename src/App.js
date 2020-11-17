@@ -15,7 +15,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+guyz if you see this you have successful clone Zaire
         </a>
       </header>
     </div>
