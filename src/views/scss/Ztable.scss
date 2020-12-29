@@ -1,0 +1,72 @@
+$light: hsl(200, 18%, 33%);
+$accent: #ffac28;
+$dark: #1c3039;
+$goodGreen: #00df3c;
+
+.Zth-tr:hover {
+  background-color: $accent;
+}
+.Zth-tr {
+  cursor: pointer;
+}
+.Zth {
+}
+.Ztd {
+  border: none;
+}
+.Ztable {
+  border-collapse: collapse;
+  box-shadow: 0 3px 6px 0px rgba($color: $dark, $alpha: 0.16);
+}
+
+.Zthead {
+  .Zth {
+    background-color: $dark;
+    color: $accent;
+  }
+}
+
+.date {
+  background-color: $dark;
+  color: $accent;
+}
+
+@media screen{
+    tr {
+        cursor: pointer;
+      }
+    
+      td {
+        border: none;
+      }
+      table {
+        border-collapse: collapse;
+        box-shadow: 0 3px 6px 0px rgba($color: $dark, $alpha: 0.16);
+      }
+    
+      th {
+        background-color: $dark;
+        color: $accent;
+      }
+}
+
+
+
+@media print {
+  tr {
+    cursor: pointer;
+  }
+
+  td {
+    border: none;
+  }
+  table {
+    border-collapse: collapse;
+    box-shadow: 0 3px 6px 0px rgba($color: $dark, $alpha: 0.16);
+  }
+
+  th {
+    background-color: $dark;
+    color: $accent;
+  }
+}

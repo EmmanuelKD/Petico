@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,QAAQ,AAAA,MAAM,CAAA;EACd,OAAO,EAAE,CAAC;CACT",
+    "sources": [
+        "otherPlace.scss"
+    ],
+    "names": [],
+    "file": "otherPlace.css"
+}

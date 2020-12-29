@@ -1,12 +1,17 @@
-const firebaseConfig = {
-    apiKey: "AIzaSyBtqof1mYKlp581OUHaDW5pXsujB80xulk",
-    authDomain: "petico-4ab69.firebaseapp.com",
-    databaseURL: "https://petico-4ab69.firebaseio.com",
-    projectId: "petico-4ab69",
-    storageBucket: "petico-4ab69.appspot.com",
-    messagingSenderId: "947156479461",
-    appId: "1:947156479461:web:1a2b1d31bb5d18d49cd30c",
-    measurementId: "G-L5HXSPZHS2"
-  };
 
-firebase.initializeApp(firebaseConfig);
+import firebase from "firebase/app";
+
+const config = {
+
+  appId: process.env.REACT_APP_APP_ID,
+  // apiKey: process.env.REACT_APP_FIREBASE_KEY,
+  apiKey:"AIzaSyBtqof1mYKlp581OUHaDW5pXsujB80xulk",
+  authDomain: process.env.REACT_APP_FIREBASE_DOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_SENDER_ID,
+};
+
+
+export default firebase.initializeApp(config);
