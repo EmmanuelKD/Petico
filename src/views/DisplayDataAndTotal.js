@@ -30,6 +30,13 @@ const useStyles = makeStyles((theme) => ({
         margin: "10px",
         fontSize: "30px",
 
+    },root:{
+      
+        width: '100%' 
+        ,[theme.breakpoints.down("sm")]:{
+            width: '94vw' 
+
+        }
     }, main: {
         // backgroundColor: "#f5f5f5",
 
@@ -51,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function DiaplayDataAndTotals({ data, total, DialogChild, dialogTitle, mapOrder,displayEdit ,awaitingData }) {
+export default function DiaplayDataAndTotals({ data, total, DialogChild, dialogTitle, declineTitle, mapOrder, displayEdit, awaitingData }) {
 
     const classes = useStyles();
 
@@ -65,9 +72,20 @@ export default function DiaplayDataAndTotals({ data, total, DialogChild, dialogT
         setOpen(false);
     };
 
+    const [errorData, serErrorData] = React.useState(null)
 
+
+    React.useEffect(() => {
+        if (awaitingData !== undefined)
+            if (awaitingData["isDecline"] === true) {
+                serErrorData(awaitingData["AwaitingData"])
+                handleClickOpen();
+
+            }
+    }, [data, awaitingData]);
 
     const [load, setLoad] = React.useState(false);
+
     function toggle() {
         setLoad(!load);
     }
@@ -78,17 +96,16 @@ export default function DiaplayDataAndTotals({ data, total, DialogChild, dialogT
         <div className={classes.main}>
             <DataContextProvider>
                 {load ?
-                    <div style={{ height: 400, width: '90%' }}>
+                    <div className={classes.root}>
                         <YearSelector years={["2020", "2021", "2022"]} />
 
                         {
-                            
-                            data !== undefined &&Object.keys(data).map((Data, index) => Data.toString() !== "years" && <MinimizerWithZTable key={index} month={Data.toString()} Data={data[Data]} mapOrder={mapOrder} />)
+                            data !== undefined && Object.keys(data).map((Data, index) => Data.toString() !== "years" && <MinimizerWithZTable key={index} month={Data.toString()} Data={data[Data]} mapOrder={mapOrder} />)
                         }
                         {
-                            awaitingData !==undefined && Object.keys(awaitingData)?.map((Data, index) => Data.toString() !== "years" && <MinimizerWithZTable key={index} month={Data.toString()} Data={awaitingData[Data]} mapOrder={mapOrder} isAwaiting={true}/>)
+                            awaitingData !== undefined && Object.keys(awaitingData).map((Data, index) => Data.toString() !== "isDecline" && <MinimizerWithZTable key={index} month={Data.toString()} Data={awaitingData[Data]} mapOrder={mapOrder} isAwaiting={true} />)
                         }
-                        <div className={classes.total}>total:le {total??0}</div>
+                        <div className={classes.total}>total:le {total ?? 0}</div>
                         <FloatingActions onClickAdd={handleClickOpen} displayEdit={displayEdit} />
 
                         <Dialog
@@ -101,9 +118,16 @@ export default function DiaplayDataAndTotals({ data, total, DialogChild, dialogT
                             aria-labelledby="alert-dialog-slide-title"
                             aria-describedby="alert-dialog-slide-description"
                         >
-                            <DialogTitle id="alert-dialog-slide-title">{dialogTitle}</DialogTitle>
+                            <DialogTitle id="alert-dialog-slide-title" style={{ color: errorData && "#f00" }}>
+                                {errorData ?
+                                    <marquee width="100%" direction="right" height="100px">
+                                        {declineTitle}
+                                    </marquee>
+                                    :
+                                    dialogTitle
+                                }</DialogTitle>
                             <DialogContent className={classes.dialogContent}>
-                                <DialogChild />
+                                <DialogChild data={errorData} />
 
                             </DialogContent>
                             <DialogActions>

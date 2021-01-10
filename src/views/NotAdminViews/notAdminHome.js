@@ -21,41 +21,81 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import SalesRecord from "../SalesRecord"
 import MoneyIcon from '@material-ui/icons/Money';
 import Dashbord from "./DashBord"
+import { useMediaQuery } from "@material-ui/core"
+import { useTheme } from "@material-ui/styles"
+
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+    // [theme.breakpoints.down("sm")]: {
+
+    // },
   },
   appBar: {
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
+    [theme.breakpoints.down("sm")]: {
+      width: "100%"
+    },
   },
   drawer: {
     width: drawerWidth,
-    flexShrink: 0,
+    // flexShrink: 0,
+    [theme.breakpoints.down("sm")]:{
+      width:"55px",
+      zIndex:theme.zIndex.appBar-1
+    }
   },
   drawerPaper: {
+
+    backgroundColor:theme.palette.primary.dark,
     width: drawerWidth,
+    [theme.breakpoints.down("sm")]:{
+      // marginTop:the
+      width: "auto",
+      marginTop: "53px",
+      height:"calc(100%-53px)"
+    }
   },
   // necessary for content to be below app bar
-  toolbar: theme.mixins.toolbar,
+  toolbar: {...theme.mixins.toolbar,
+    [theme.breakpoints.down("sm")]:{
+     display:"none"
+    }
+  },
+ 
   content: {
     marginTop: "60px",
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing(3),
-  },
+  },DrawerListText:{
+    [theme.breakpoints.down("sm")]: {
+    display:"none"
+    },
+  },DrawerListIcon:{
+    // width:"70px",
+  },DrawerListList:{
+    [theme.breakpoints.down("sm")]: {
+marginTop:"10px",
+width:"55px",
+       },
+  }
 }));
 
 function PermanentDrawerLeft() {
   const classes = useStyles();
   const [selectedPage, selectAPage] = React.useState('Dashbord')
+  const theme = useTheme();
+
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
 
   return (
     <div className={classes.root}>
-      <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" noWrap>
@@ -65,6 +105,7 @@ function PermanentDrawerLeft() {
           </Typography>
         </Toolbar>
       </AppBar>
+     
       <Drawer
         className={classes.drawer}
         variant="permanent"
@@ -72,7 +113,7 @@ function PermanentDrawerLeft() {
           paper: classes.drawerPaper,
         }}
         anchor="left"
-      >
+       >
         <div className={classes.toolbar} />
         <Divider />
         <List>
@@ -86,9 +127,9 @@ function PermanentDrawerLeft() {
               ///logout
 
               return (
-                <ListItem button key={index} onClick={() => selectAPage(item.name)}>
-                  <ListItemIcon>{<item.icon />}</ListItemIcon>
-                  <ListItemText primary={item.name} />
+                <ListItem button key={index} onClick={() => selectAPage(item.name)} className={classes.DrawerListList}>
+                  <ListItemIcon children={<item.icon/>} className={classes.DrawerListIcon}  />
+                  <ListItemText primary={item.name} className={classes.DrawerListText}/>
                 </ListItem>
               )
             })}

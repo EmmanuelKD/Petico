@@ -1,8 +1,3 @@
-body {
-  font-family: "Lato", sans-serif;
-  font-size: 16px;
-}
-
 .title {
   font-size: 1.4em;
   font-weight: 300;
@@ -50,14 +45,41 @@ body {
   height: 50px;
 }
 
+.byView {
+  font-size: 1em;
+  font-weight: 300;
+  cursor: pointer;
+}
+
 .mainChart {
   width: 100%;
   height: auto;
 }
 
-.byView {
-  font-size: 1em;
-  font-weight: 300;
-  cursor: pointer;
+.container {
+  -webkit-transform: translate(35, 150) rotate(-90);
+          transform: translate(35, 150) rotate(-90);
+}
+
+@media (max-width: 959.95px) {
+  .title {
+    font-size: 1em;
+    font-weight: 150;
+  }
+  .byView {
+    font-size: 1em;
+    font-weight: 120;
+    cursor: pointer;
+  }
+  .container {
+    -webkit-transform: translate(0, 150) rotate(-90);
+            transform: translate(0, 150) rotate(-90);
+  }
+  .mainChartContainer {
+    width: 110%;
+  }
+  .mainChart {
+    overflow-x: scroll;
+  }
 }
 /*# sourceMappingURL=barchart.css.map */

@@ -167,26 +167,29 @@ export async function isPaymentRecordDataExist(presentYear) {
 /// sales Awaiting approval
 
 
-export async function addAllSalesAwaitingAproval(presentYear, data) {
-    await salesRecordsAwaitingApproval.doc(presentYear).set(data, { merge: true })
+export async function addAllSalesAwaitingAproval(data) {
+    await salesRecordsAwaitingApproval.doc("temp").set(data, { merge: true })
 }
 
-export async function updateSalesAwaitingAproval(presentYear, presentMonth, data) {
-    return await salesRecordsAwaitingApproval.doc(presentYear).update(presentMonth, firebase.firestore.FieldValue.arrayUnion(data));
+export async function updateSalesAwaitingAproval( presentMonth, data) {
+    return await salesRecordsAwaitingApproval.doc("temp").update("AwaitingData", firebase.firestore.FieldValue.arrayUnion(data));
 }
 
 
 export async function deleteSalesAwaitingAproval(presentYear, presentMonth) {
-    return await salesRecordsAwaitingApproval.doc(presentYear).delete()
+    return await salesRecordsAwaitingApproval.doc("temp").delete()
+}
+export async function isdeclineSalesAwaitingAproval(boolean) {
+    return await salesRecordsAwaitingApproval.doc("temp").update({isDecline:boolean})
 }
 
 export async function getAllSalesAwaitingAproval(presentYear) {
-    const snapShort = await salesRecordsAwaitingApproval.doc(presentYear).get();
+    const snapShort = await salesRecordsAwaitingApproval.doc("temp").get();
     return snapShort.data();
 }
 
-export async function getAllSalesAwaitingAprovalStream(presentYear, setData) {
-    salesRecordsAwaitingApproval.doc(presentYear).onSnapshot({
+export async function getAllSalesAwaitingAprovalStream(setData) {
+    salesRecordsAwaitingApproval.doc("temp").onSnapshot({
         includeMetadataChanges: true
     }, (doc) => {
         if (doc.exists){
@@ -196,7 +199,7 @@ export async function getAllSalesAwaitingAprovalStream(presentYear, setData) {
 }
 
 export async function isSalesAwaitingAproval(presentYear) {
-    let doc = await salesRecordsAwaitingApproval.doc(presentYear).get();
+    let doc = await salesRecordsAwaitingApproval.doc("AwaitingData").get();
     return doc.exists
 }
 

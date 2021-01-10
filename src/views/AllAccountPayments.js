@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import CustomizedInputBase from "./SearchBar"
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles ,useTheme} from '@material-ui/core/styles';
 import Ztable from "./zTable/Ztable"
 import TextField from '@material-ui/core/TextField';
 import Button from "@material-ui/core/Button"
@@ -15,6 +15,9 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import DatePicker from "./DateYearPicker"
+
+import { useMediaQuery } from "@material-ui/core"
+
 const useStyles = makeStyles((theme) => ({
     floatButton: {
         position: "fixed",
@@ -41,19 +44,13 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         gridRow: "1/2",
         gridColumn: "2/3",
-
+        [theme.breakpoints.down("sm")]: {
+            gridRow: "1/2",
+            gridColumn: "1/2",
+          },
 
     },
-    //     heading: {
-    //         // padding: '2px 4px',
-    //         // alignItems: 'flex-end',
-    //         // gridRow: "1/2",
-    //         // gridColumn: "2/3",
-    // position:"absolute",
-    // right:0,
 
-
-    //     },
     gridMain: {
 
         display: "grid",
@@ -62,7 +59,10 @@ const useStyles = makeStyles((theme) => ({
         height: "75vh",
         // width:"70%",
         gridGap: "5px",
-
+        [theme.breakpoints.down("sm")]: {
+            gridTemplateRows: "15% 85% 85%",
+        gridTemplateColumns: "100%",
+          },
     },
     payMentList: {
         overflowY: "scroll",
@@ -71,6 +71,10 @@ const useStyles = makeStyles((theme) => ({
         gridColumn: "1/2",
         width: "100%",
         height: "100%",
+        [theme.breakpoints.down("sm")]: {
+            gridRow: "2/3",
+            gridColumn: "1/2",
+          },
     }, addPayment: {
         display: "flex",
         justifyContent: "center",
@@ -78,6 +82,10 @@ const useStyles = makeStyles((theme) => ({
         gridRow: "2/3",
         gridColumn: "2/3",
         backgroundColor: "#f5f5f5",
+        [theme.breakpoints.down("sm")]: {
+            gridRow: "3/4",
+            gridColumn: "1/2",
+          },
     }
 
 }));
@@ -91,6 +99,12 @@ export default function AccountPayment(props) {
     const date = new Date()
     const defaultVal = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
 
+
+    const appTheme=useTheme();
+
+    const isSmallScreen = useMediaQuery(appTheme.breakpoints.down('sm'));
+  
+  
     const { enqueueSnackbar } = useSnackbar();
 
 
@@ -154,7 +168,7 @@ export default function AccountPayment(props) {
                 </div>
                 <div className={classes.addPayment}>
                     <div>
-                        <BasicTextFields />
+                   <BasicTextFields />
                     </div>
                 </div>
             </div>
@@ -171,6 +185,7 @@ export default function AccountPayment(props) {
 
 
 function BasicTextFields() {
+
     const classes = useStyles();
 
     var supplyNumberRef = React.useRef();

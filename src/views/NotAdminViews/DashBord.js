@@ -1,24 +1,38 @@
 import React from "react"
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import { updateSalesTotal, updateSalesRecords, isSalesRecordDataExist, getAllSalesAwaitingAprovalStream, deleteSalesAwaitingAproval, addSalesRecords } from "../../controller/crudModules"
+import { isdeclineSalesAwaitingAproval, updateSalesTotal, updateSalesRecords, isSalesRecordDataExist, getAllSalesAwaitingAprovalStream, deleteSalesAwaitingAproval, addSalesRecords } from "../../controller/crudModules"
 import Card from "@material-ui/core/Card"
 import firebase from "firebase"
 import Button from "@material-ui/core/Button"
 import { useSnackbar } from 'notistack';
 import CircularProgressBar from "@material-ui/core/CircularProgress"
+
+import { useMediaQuery } from "@material-ui/core"
+import { useTheme } from "@material-ui/styles"
+
+
 const useStyles = makeStyles((theme) => ({
 
     flexMain: {
         display: "flex",
         flexDirection: "row",
-
+        [theme.breakpoints.down("sm")]: {
+            flexWrap: "nowrap",
+            flexDirection: "column",
+            // marginLeft: "22%",
+            // width:"calc(100% - 10%)"
+        }
     }
     , FavoriteMain: {
         teansition: "500ms ease-in-out",
         height: "82vh",
         width: "40%",
         overflow: "hidden",
+        [theme.breakpoints.down("sm")]: {
+            height: "40vh",
+            width:"100%"
+        }
 
     }, Favheading: {
         backgroundColor: "#f5f5f5",
@@ -40,6 +54,10 @@ const useStyles = makeStyles((theme) => ({
         gridTemplateColumns: "100%",
         gridTemplateRows: `5% 36% 8% 50%`,
         gridGap: "5px",
+        [theme.breakpoints.down("sm")]: {
+            flexWrap: "nowrap",
+            flexDirection: "column",
+        }
     }
     , grid1: {
         fontStyle: "bold",
@@ -59,17 +77,15 @@ const useStyles = makeStyles((theme) => ({
 
     }, grid4: {
 
-        backgroundColor: "#f5f5f5",
+        // backgroundColor: "#f5f5f5",
         gridRow: "4/5",
         gridColumn: "1/3",
         padding: theme.spacing(3),
-
-
         overflow: "hidden",
         overflowY: "scroll"
     }
     , grid2: {
-        backgroundColor: "#f5f5f5",
+        // backgroundColor: "#f5f5f5",
         display: "flex",
         width: "100%",
         gridRow: "2/3",
@@ -81,8 +97,7 @@ const useStyles = makeStyles((theme) => ({
     }, cardMain: {
         marginRight: "5px",
         marginLeft: "5px",
-        marginTop: "10px"
-        ,
+        marginTop: "10px",
         cursor: "pointer"
     }
     , cardflex: {
@@ -115,6 +130,14 @@ const useStyles = makeStyles((theme) => ({
 export default function Dashbord(props) {
     const classes = useStyles();
 
+
+    const theme = useTheme();
+
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+
+
+
     const [totalGoodsSend, setTotalGoodsSend] = React.useState({})
 
     const [selectedAwaitedData, setSelectedAwaited] = React.useState(null)
@@ -140,7 +163,7 @@ export default function Dashbord(props) {
     };
 
     React.useEffect(() => {
-        getAllSalesAwaitingAprovalStream(presentYear, setTotalGoods)
+        getAllSalesAwaitingAprovalStream(setTotalGoods)
     }, [])
 
     function setTotalGoods(data) {
@@ -156,8 +179,8 @@ export default function Dashbord(props) {
                 <div className={classes.FavBody}>
                     {
                         Object.keys(totalGoodsSend).map((keys, i) => {
-                            return keys === "years" ? <div>{totalGoodsSend[keys]}</div> :
-                                <DisplayAwaiting month={keys} year={totalGoodsSend["years"]} data={totalGoodsSend[keys]} onclick={setSelectedAwaitedData} />
+                            return keys === "isDecline" ? <div>{totalGoodsSend[keys]}</div> :
+                                <DisplayAwaiting month={keys} year={totalGoodsSend["isDecline"]} data={totalGoodsSend[keys]} onclick={setSelectedAwaitedData} />
                         })
                     }
                 </div>
@@ -219,7 +242,7 @@ export default function Dashbord(props) {
                     years: presentYear,
                     [presentMonth]: [salesRecord],
                 }).then(async (data) => {
-                    await deleteSalesAwaitingAproval(presentYear, presentMonth).then(async() => {
+                    await deleteSalesAwaitingAproval(presentYear, presentMonth).then(async () => {
                         await updateSalesTotal(salesRecord.Amount).then(async () => {
 
                             handleClickVariant("data accepted", "success")
@@ -254,6 +277,16 @@ export default function Dashbord(props) {
         const classes = useStyles();
         let date = manipulateData(selectedAwaitedData.Date)
         const [loading, setLoading] = React.useState(false)
+
+
+        const { enqueueSnackbar } = useSnackbar();
+
+
+        const handleClickVariant = (message, variant) => {
+            // variant could be success, error, warning, info, or default
+            enqueueSnackbar(message, { variant });
+        };
+
         return (
             <div>
                 <div>{date}</div>
@@ -261,7 +294,15 @@ export default function Dashbord(props) {
                 <div>send to {selectedAwaitedData?.Receiver}</div>
 
                 <div className={classes.btnFlx}>
-                    <Button className={classes.declineBtn}>Decline</Button>
+                    <Button className={classes.declineBtn}
+                        onClick={() => {
+                            isdeclineSalesAwaitingAproval(true).then(
+                                () => {
+                                    handleClickVariant("you have decline", "warning")
+                                }
+                            )
+                        }}
+                    >Decline</Button>
 
                     <Button className={classes.approvedBtn} onClick={async () => {
                         setLoading(true)

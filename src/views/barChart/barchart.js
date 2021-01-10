@@ -2,21 +2,31 @@ import React from 'react'
 import '../scss/barchart.css'
 import Card from "@material-ui/core/Card"
 import {getTotalMonthAndDayStream} from '../../controller/crudModules'
-
-
+import {useTheme} from "@material-ui/styles"
+import {useMediaQuery} from "@material-ui/core"
 function BarGroup(props) {
-    let barPadding = 5
-    let barColour = '#348AA7'
+    
+    const appTheme=useTheme();
+
+    const isSmallScreen = useMediaQuery(appTheme.breakpoints.down('sm'));
+  
+  
+
+    let barPadding = isSmallScreen?0:5
+    let barColour =appTheme.palette.primary.main
     let widthScale = d => d * 1.5
 
-    let width = widthScale(props.d.value)
-    let yMid = props.barHeight * 0.5
-    let xMid = props.barHeight * .7
+    let width =widthScale(props.d.value)
+    let yMid = isSmallScreen?(props.barHeight* 0.5)/2.5:props.barHeight* 0.5
+    let xMid =isSmallScreen?(props.barHeight * .7)/2.5:props.barHeight * .7
+
+   let height=isSmallScreen?(props.barHeight - barPadding)/2.5:props.barHeight - barPadding
+   let y=isSmallScreen?0:barPadding * 0.5
 
     return <g className="bar-group">
-        <text className="name-label" x={xMid} y={yMid} alignmentBaseline="middle"
-            transform="rotate(90)">{props.d.name}</text>
-        <rect y={barPadding * 0.5} width={width} height={props.barHeight - barPadding} fill={barColour} />
+        <text className="name-label" x={xMid*1.5} y={yMid*2} alignmentBaseline="middle"
+            transform="rotate(90)">{isSmallScreen?props.d.name.substring(0,1):props.d.name}</text>
+        <rect y={y} width={width} height={height} fill={barColour} />
         <text className="value-label" x={width - 8} y={yMid} alignmentBaseline="middle"
         >{props.d.value}</text>
     </g>
@@ -24,8 +34,8 @@ function BarGroup(props) {
 
 
 export default class BarChart extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             data: [],
             isbyday: true,
@@ -81,38 +91,47 @@ export default class BarChart extends React.Component {
 
 
     render() {
-        let barHeight = 60
-        let barGroups = this.state.data.map((d, i) => <g key={d.name + i} transform={`translate(0, ${i * barHeight})`}>
-            <BarGroup i={i} d={d} barHeight={barHeight} />
-        </g>)
+       
 
 
 
 
 
-        return <Card className="mainCard">
+        return <>
 
             <svg className="mainChartHeadings">
                 <g>
                     <text className="title" x="10" y="30">Week beginning 9th July</text>
                 </g>
                 <g>
-                    <text className="byView" x="300" y="30" style={{ opacity: this.state.isbyday ? .5 : 1 }} onClick={this.toggleByMonth}>This year</text>
-                    <text className="byView" x="450" y="30" style={{ opacity: this.state.isbyday ? 1 : .5 }} onClick={this.toggleByDay}>This week</text>
+                    <text className="byView" x={this.props.x} y="30" style={{ opacity: this.state.isbyday ? .5 : 1 }} onClick={this.toggleByMonth}>This year</text>
+                    <text className="byView" x={this.props.x2} y="30" style={{ opacity: this.state.isbyday ? 1 : .5 }} onClick={this.toggleByDay}>This week</text>
 
                 </g>
             </svg>
-
+            <div className="mainChartContainer" >
             <svg className="mainChart" height="200">
-                <g className="container" transform="translate(35,150) rotate(-90)">
-                    {barGroups}
-                </g>
+               <BarGroups data={this.state.data}/>
             </svg>
-        </Card>
+            </div>
+
+        </>
     }
 }
 
-//   ReactDOM.render(
-//     <BarChart />,
-//     document.getElementById('app')
-//   )
+function BarGroups({data}){
+    const appTheme=useTheme();
+
+    const isSmallScreen = useMediaQuery(appTheme.breakpoints.down('sm'));
+  
+  
+    let barHeight = isSmallScreen?(60/2.5):60
+    return  <g className="container" transform={isSmallScreen?"translate(5,150) rotate(-90)":"translate(35,150) rotate(-90)"}>
+   {
+   data.map((d, i) => <g key={d.name + i} transform={`translate(0, ${i * barHeight})`}>
+        <BarGroup i={i} d={d} barHeight={barHeight} />
+    </g>)}
+</g>
+    
+   
+}

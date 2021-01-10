@@ -13,6 +13,15 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Home from './home'
 import DefaultModule from "../controller/firebaseInitializer"
 
+import IconButton from '@material-ui/core/IconButton';
+import Input from '@material-ui/core/Input';
+
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import FormControl from '@material-ui/core/FormControl';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+
 
 var useStyle = makeStyles(theme => ({
   dialogForm2: {
@@ -22,6 +31,21 @@ var useStyle = makeStyles(theme => ({
     height: "100%",
     fontSize: "20px",
 
+  }, textField: {
+    width: '35ch',
+    margin: theme.spacing(1),
+
+  }, dialogMain: {
+
+  }, dialogForm: {
+
+    [theme.breakpoints.down("sm")]: {
+      width: "70vw",
+
+    },
+
+  }, flexDis: {
+
   }
 
 }))
@@ -30,10 +54,7 @@ var useStyle = makeStyles(theme => ({
 
 export default function Login() {
   const { enqueueSnackbar } = useSnackbar();
-
-
-
-
+ 
   const handleClickVariant = (message, variant) => {
     // variant could be success, error, warning, info, or default
     enqueueSnackbar(message, { variant });
@@ -46,14 +67,24 @@ export default function Login() {
 
 
 
+  const [showPassword, setShowPassword] = React.useState(false)
+
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   // const [open, setOpen] = React.useState(false);
   const [loading, SetIsLoading] = React.useState(false);
   const [usersID, setUserId] = React.useState();
 
-function setUsersId(uid){
-  setUserId(uid)
-}
+  function setUsersId(uid) {
+    setUserId(uid)
+  }
 
   function setIsLoad(loading) {
     SetIsLoading(loading)
@@ -65,23 +96,23 @@ function setUsersId(uid){
         {(val) => {
 
           if ((!val.showDialog)) {
-            return <Home  usersID={usersID} />
+            return <Home usersID={usersID} />
           } else
             if (val.showDialog) {
 
               return <StyleProvider injectFirst>
-                <div className="dialogMain">
-                  <div className={"dialogForm  dialogForm1Login"}>
+                <div className={`dialogMain ${classes.dialogMain}`}>
+                  <div className={`dialogForm dialogForm1Login ${classes.dialogForm} `}>
                     {/* loginClick(!login) */}
 
-                    <div className="grid1 flexDis">
+                    <div className={`${classes.flexDis} grid1 flexDis`}>
                       {loading && <CircularProgress />}
                     </div>
-                    <div className="grid2 flexDis">  <Button onClick={
+                    <div className={`${classes.flexDis} grid2 flexDis`}>  <Button onClick={
                       async () => {
                         setIsLoad(true)
                         try {
-                         await loginWithEmailAndPassword(emailRef.current.value, passwordRef.current.value)
+                          await loginWithEmailAndPassword(emailRef.current.value, passwordRef.current.value)
                             .then(async (user) => {
                               if (user.user.uid) {
                                 setUsersId(user.user.uid);
@@ -109,7 +140,7 @@ function setUsersId(uid){
                   </Button>
                     </div>
                     <div className="grid3 centerall">
-                      <TextField
+                      {/* <TextField
                         inputRef={passwordRef}
                         autoFocus
                         margin="dense"
@@ -117,10 +148,34 @@ function setUsersId(uid){
                         label="Password"
                         type="password"
                         fullWidth
-                      />
+
+                      /> */}
+                      <FormControl className={classes.textField}>
+                        <InputLabel htmlFor="standard-adornment-password">Password</InputLabel>
+                        <Input
+                          inputRef={passwordRef}
+                          id="standard-adornment-password"
+                          type={showPassword ? 'text' : 'password'}
+                          // value={values.password}
+                          // onChange={handleChange('password')}
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowPassword}
+                                onMouseDown={handleMouseDownPassword}
+                              >
+                                {showPassword ? <Visibility /> : <VisibilityOff />}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                        />
+                      </FormControl>
+
                     </div>
                     <div className="grid4 centerall">
                       <TextField
+                        className={classes.textField}
                         inputRef={emailRef}
                         autoFocus
                         margin="dense"

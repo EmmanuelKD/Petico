@@ -1,4 +1,4 @@
-import React ,{useRef} from 'react';
+import React, { useRef } from 'react';
 import { SalesRecordsProvider, SalesRecordsConsumer } from "../modules/SalesRecordContext"
 
 import DiaplayDataAndTotals from "./DisplayDataAndTotal"
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     }, newlyAddedRecords: {
         backgroundColor: "#f5f5f5",
         width: "100%",
-        minHeight:"75%",
+        minHeight: "75%",
         maxHeight: "90%"
 
     }, rootEditText: {
@@ -36,9 +36,9 @@ const useStyles = makeStyles((theme) => ({
             margin: theme.spacing(1),
             width: '25ch',
         },
-    },dialogMain:{
+    }, dialogMain: {
         width: "100%",
-height:"100%",
+        height: "100%",
 
     }, Table: {
         height: "50px",
@@ -61,10 +61,11 @@ export default function StockRecord() {
                 {
                     (value) => {
                         return <DiaplayDataAndTotals
-                        total={value.salesTotal}
-                        awaitingData={value.awaitingAproval}
-                        data={value.selecteYearData} DialogChild={AddsalesRecordPage} 
-                        dialogTitle={"add more Stock to store"} mapOrder={saleRecordMapOrder} />
+                            declineTitle={"This data was decline"}
+                            total={value.salesTotal}
+                            awaitingData={value.awaitingAproval}
+                            data={value.selecteYearData} DialogChild={AddsalesRecordPage}
+                            dialogTitle={"add more Stock to store"} mapOrder={saleRecordMapOrder} />
                     }
                 }
             </SalesRecordsConsumer>
@@ -96,6 +97,7 @@ function AddsalesRecordPage(props) {
     };
 
 
+
     const [salesdata, setData] = React.useState([{
         Date: "",
         Receiver: "",
@@ -107,22 +109,29 @@ function AddsalesRecordPage(props) {
         setData(old => [...old, data]);
     }
 
+    React.useEffect(() => {
+        console.log(props.data)
+        if (props.data !== null && props.data !== undefined) {
+            setData(props.data);
+        }
+    }, [salesdata, props]
+    );
 
     async function onAddButtonclick() {
 
         let amountEdit = amountEditText.current?.value;
         let receiversEdit = receiversEditText.current?.value;
-     
+
 
         if (receiversEdit &&
-            amountEdit 
+            amountEdit
         ) {
 
             let salesRecord = {
                 Date: new Date(),
                 Receiver: receiversEdit,
                 Amount: amountEdit,
-              
+
             }
 
 
@@ -130,12 +139,12 @@ function AddsalesRecordPage(props) {
 
                 let month = getKey();
                 console.log(month)
-                let dataExist = await isSalesAwaitingAproval(presentYear)
+                let dataExist = await isSalesAwaitingAproval("temp")
                 if (dataExist) {
-                    updateSalesAwaitingAproval(presentYear, month, salesRecord).then((data) => {
+
+                    updateSalesAwaitingAproval(month, salesRecord).then((data) => {
                         handleClickVariant("data added", "success")
                         addDataToState(salesRecord)
-
                     }).catch((error) => {
                         var errorCode = error.code;
                         var errorMessage = error.message;
@@ -143,9 +152,9 @@ function AddsalesRecordPage(props) {
                     })
 
                 } else {
-                    addAllSalesAwaitingAproval(presentYear, {
-                        years: presentYear,
-                        [month]: [salesRecord],
+                    addAllSalesAwaitingAproval({
+                        isDecline: false,
+                        AwaitingData: [salesRecord],
                     }).then((data) => {
                         handleClickVariant("data added", "success")
                         addDataToState(salesRecord)
@@ -169,11 +178,11 @@ function AddsalesRecordPage(props) {
         }
 
 
-      amountEditText.current.value=""
-      receiversEditText.current.value=""
+        amountEditText.current.value = ""
+        receiversEditText.current.value = ""
 
-    
-      receiversEditText.current.focus();
+
+        receiversEditText.current.focus();
 
         function getKey() {
             let month;
@@ -189,14 +198,10 @@ function AddsalesRecordPage(props) {
 
     }
 
-
-
-
-
     return (
         <div className={classes.dialogMain}>
             <div className={classes.newlyAddedRecords}>
-            <ZTable data={salesdata} className={classes.Table}
+                <ZTable data={salesdata} className={classes.Table}
                     thStyle={{
                         position: "sticky", top: 0, zIndex: 0,
 
@@ -217,7 +222,7 @@ function AddsalesRecordPage(props) {
                     <FilledInput
                         inputRef={amountEditText}
                         id="filled-adornment-weight"
-                        
+
                         onChange={() => { }}
                         endAdornment={<InputAdornment position="start">Le:</InputAdornment>}
                         aria-describedby="filled-weight-helper-text"
@@ -228,7 +233,7 @@ function AddsalesRecordPage(props) {
                     <FormHelperText id="filled-weight-helper-text">Amount</FormHelperText>
                 </FormControl>
                 <Button className={classes.addButton}
-                onClick={onAddButtonclick}
+                    onClick={onAddButtonclick}
                 >Add</Button>
             </form>
         </div>
@@ -247,7 +252,7 @@ function AddsalesRecordPage(props) {
 
 //         let amountEdit = amountEditText.current?.value;
 //         let receiversEdit = receiversEditText.current?.value;
-     
+
 
 //         if (receiversEdit &&
 //             amountEdit 
@@ -257,7 +262,7 @@ function AddsalesRecordPage(props) {
 //                 Date: new Date(),
 //                 Receiver: receiversEdit,
 //                 Amount: amountEdit,
-              
+
 //             }
 
 
@@ -307,7 +312,7 @@ function AddsalesRecordPage(props) {
 //       amountEditText.current.value=""
 //       receiversEditText.current.value=""
 
-    
+
 //       receiversEditText.current.focus();
 
 //         function getKey() {

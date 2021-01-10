@@ -21,7 +21,7 @@ export default class SalesRecordsProvider extends React.PureComponent {
 
     componentDidMount() {
 
-        getAllSalesAwaitingAprovalStream(this.presentYear,this.setawaitingData)
+        getAllSalesAwaitingAprovalStream(this.setawaitingData)
 
         getAllSalesRecordsByYearStream(this.presentYear, this.setData)
 
